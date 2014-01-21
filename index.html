@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html ng-app="msi">
+<head>
+  <title>My Stream Interest</title>
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+  <link rel="stylesheet" href="./app/styles.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+</head>
+<body class="center-block" ng-controller="MainCtrl">
+<div id="main-container">
+  <h1>My Stream Interest</h1>
+  <div>
+    See how much of your stream is actually interesting to you. Login below to get started.
+  </div>
+  <div class="login-buttons center-block ng-cloak">
+    <div ng-if="!loginObj.user">
+      <button class="btn btn-default btn-block btn-lg button-twitter third-party-button" ng-click="login.twitter()">
+        <i class="fa fa-twitter margin-right-medium"></i> Twitter
+      </button>
+      <br />
+      <button class="btn btn-default btn-block btn-lg button-facebook third-party-button" ng-click="login.facebook()">
+        <i class="fa fa-facebook margin-right-medium"></i> Facebook
+      </button>
+    </div>
+    <div ng-if="loginObj.user">
+      <h3>Switch to: </h3>
+      <button class="btn btn-default btn-block button-twitter third-party-button" ng-click="loginObj.$logout(); loginObj.$login('twitter')" ng-if="loginObj.user.provider === 'facebook'">
+        <i class="fa fa-twitter margin-right-medium"></i> Twitter
+      </button>
+      <br />
+      <button class="btn btn-default btn-block button-facebook third-party-button" ng-click="loginObj.$logout(); loginObj.$login('facebook')" ng-if="loginObj.user.provider === 'twitter'">
+        <i class="fa fa-facebook margin-right-medium"></i> Facebook
+      </button>
+    </div>
+  </div>
+  <div class="ng-cloak">
+    <div class="stream">
+      <h2>{{loginObj.user.provider === 'facebook' ? 'Facebook' : loginObj.user.provider === 'twitter' ? 'Twitter' : ''}}</h2>
+    </div>
+  </div>
+  <button class="btn btn-default" ng-click="loadPosts()">Load Posts</button>
+  <button class="btn btn-default" ng-click="loginObj.$logout()">Logout</button>
+</div>
+
+<script src="https://cdn.firebase.com/v0/firebase.js"></script>
+<script src="https://cdn.firebase.com/libs/angularfire/0.6.0/angularfire.min.js"></script>
+<script src="https://cdn.firebase.com/js/simple-login/1.2.0/firebase-simple-login.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-route.js"></script>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+
+<script src="./app/app.js"></script>
+
+</body>
+</html>

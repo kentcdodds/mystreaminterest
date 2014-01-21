@@ -1,0 +1,52 @@
+body {
+  max-width: 800px;
+}
+
+#main-container {
+}
+
+.stream {
+  border: solid black 2px;
+  padding: 30px;
+}
+
+.login-buttons {
+  width: 200px;
+}
+
+.color-facebook {
+  color: #3b5998
+}
+
+.color-twitter {
+  color: #4099ff
+}
+
+.background-color-facebook {
+  background-color: #3b5998
+}
+
+.color-twitter {
+  background-color: #4099ff
+}
+
+.third-party-button {
+  color: #fff;
+  font-size: 30px
+}
+
+.button-facebook {
+  background-color: #3b5998
+}
+
+.button-facebook:hover {
+  color: #3b5998
+}
+
+.button-twitter {
+  background-color: #4099ff
+}
+
+.button-twitter:hover {
+  color: #4099ff
+}
