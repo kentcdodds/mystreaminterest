@@ -50,3 +50,37 @@ body {
 .button-twitter:hover {
   color: #4099ff
 }
+
+/*
+ * Post styles
+ */
+.post {
+  width: 400px;
+}
+.post .post-meta {
+  height: 80px;
+  position: relative;
+}
+
+.post .post-meta .profile-picture {
+  padding: 6px;
+  position: absolute;
+}
+
+.post .post-meta .post-info {
+  margin-left: 64px;
+  display: inline-block;
+  padding: 6px;
+}
+
+.post .post-meta .post-info .post-user {
+  font-size: 120%;
+}
+
+.post .post-content {
+  overflow: hidden;
+}
+
+.post .share-post {
+  height: 40px;
+}

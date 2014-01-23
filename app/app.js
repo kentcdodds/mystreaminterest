@@ -1,37 +1,40 @@
 (function() {
-  var app = angular.module('msi', ['firebase']);
+  var app = angular.module('msi', ['firebase', 'ui.bootstrap', 'pasvaz.bindonce']);
 
   app.constant('Firebase', Firebase);
+  app.constant('_', _);
 
-  app.controller('MainCtrl', function($scope, Firebase, $firebaseSimpleLogin, $http) {
-    $scope.loginObj = $firebaseSimpleLogin(new Firebase('https://mystreaminterest.firebaseio.com'));
-
-    $scope.login = {
-      facebook: function() {
-        $scope.loginObj.$login('facebook', {
-          scope: 'read_stream'
+  app.constant('StreamGenerator', {
+    facebook: function(data) {
+      console.log(data);
+      var posts = [];
+      _.each(data.data, function(post) {
+        posts.push({
+          author: {
+            profilePicture: {
+              url: 'http://graph.facebook.com/' + post.from.id + '/picture'
+            },
+            url: 'http://facebook.com/' + post.from.id,
+            name: post.from.name
+          },
+          url: post.link,
+          modified: new Date(post.created_time),
+          content: {
+            text: post.message || post.story,
+            url: post.link,
+            img: {
+              url: post.picture,
+              caption: post.name
+            },
+            description: post.description
+          },
+          src: post
         });
-      },
-      twitter: function() {
-        $scope.loginObj.$login('twitter');
-      }
-    };
-
-    $scope.loadPosts = function() {
-      getStream($scope.loginObj.provider);
-    };
-    function getStream(provider) {
-      var url = 'https://api.twitter.com/1.1/statuses/home_timeline.json';
-      if (provider === 'facebook') {
-        url = 'https://graph.facebook.com/me/home';
-      }
-      $http({
-        method: 'GET',
-        url: url + '?access_token=' + $scope.loginObj.user.accessToken
-      }).then(function(data) {
-        $scope.posts = data;
-        console.log(data);
       });
+      return posts;
+    },
+    twitter: function(data) {
+      console.log(data);
     }
   });
 })();

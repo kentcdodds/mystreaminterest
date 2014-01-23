@@ -1,0 +1,26 @@
+<div class="post panel panel-default" bindonce="post">
+  <div class="post-meta panel-heading">
+    <a bo-href="post.author.url">
+      <img bo-src="post.author.profilePicture.url" class="profile-picture img-circle">
+    </a>
+    <div class="post-info">
+      <a bo-href="post.author.url">
+        <strong class="post-user" bo-text="post.author.name"></strong>
+      </a>
+      - <small><a bo-href="post.url" bo-text="post.modified | date:'short'"></a></small>
+    </div>
+  </div>
+  <div class="post-content panel-body">
+    <div bo-text="post.content.text"></div>
+    <a bo-href="post.content.url">
+      <img ng-if="post.content.img.url" bo-src="post.content.img.url">
+      <div bo-text="post.content.img.caption"></div>
+    </a>
+    <div bo-text="post.content.description"></div>
+  </div>
+  <div class="share-post panel-footer">
+    <div class="pull-right">
+      <rating value="post.rating" max="5"></rating>
+    </div>
+  </div>
+</div>

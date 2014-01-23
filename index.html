@@ -14,43 +14,54 @@
     See how much of your stream is actually interesting to you. Login below to get started.
   </div>
   <div class="login-buttons center-block ng-cloak">
-    <div ng-if="!loginObj.user">
-      <button class="btn btn-default btn-block btn-lg button-twitter third-party-button" ng-click="login.twitter()">
+    <div ng-if="!user">
+      <button class="btn btn-default btn-block btn-lg button-twitter third-party-button" ng-click="login('twitter')">
         <i class="fa fa-twitter margin-right-medium"></i> Twitter
       </button>
       <br />
-      <button class="btn btn-default btn-block btn-lg button-facebook third-party-button" ng-click="login.facebook()">
+      <button class="btn btn-default btn-block btn-lg button-facebook third-party-button" ng-click="login('facebook')">
         <i class="fa fa-facebook margin-right-medium"></i> Facebook
       </button>
     </div>
-    <div ng-if="loginObj.user">
+    <div ng-if="user">
       <h3>Switch to: </h3>
-      <button class="btn btn-default btn-block button-twitter third-party-button" ng-click="loginObj.$logout(); loginObj.$login('twitter')" ng-if="loginObj.user.provider === 'facebook'">
+      <button class="btn btn-default btn-block button-twitter third-party-button" ng-click="logout(); login('twitter')" ng-if="user.provider === 'facebook'">
         <i class="fa fa-twitter margin-right-medium"></i> Twitter
       </button>
       <br />
-      <button class="btn btn-default btn-block button-facebook third-party-button" ng-click="loginObj.$logout(); loginObj.$login('facebook')" ng-if="loginObj.user.provider === 'twitter'">
+      <button class="btn btn-default btn-block button-facebook third-party-button" ng-click="logout(); login('facebook')" ng-if="user.provider === 'twitter'">
         <i class="fa fa-facebook margin-right-medium"></i> Facebook
       </button>
     </div>
   </div>
   <div class="ng-cloak">
     <div class="stream">
-      <h2>{{loginObj.user.provider === 'facebook' ? 'Facebook' : loginObj.user.provider === 'twitter' ? 'Twitter' : ''}}</h2>
+      <h2>{{user.provider === 'facebook' ? 'Facebook' : user.provider === 'twitter' ? 'Twitter' : ''}}</h2>
+      <span>You are {{interestPercent}}% interested in your stream...</span>
+      <div ng-repeat="post in stream">
+        <msi-post></msi-post>
+      </div>
     </div>
   </div>
-  <button class="btn btn-default" ng-click="loadPosts()">Load Posts</button>
-  <button class="btn btn-default" ng-click="loginObj.$logout()">Logout</button>
+  <button class="btn btn-success" ng-click="getStream()">Get Stream</button>
+  <button class="btn btn-danger" ng-click="logout()">Logout</button>
 </div>
 
 <script src="https://cdn.firebase.com/v0/firebase.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/0.6.0/angularfire.min.js"></script>
 <script src="https://cdn.firebase.com/js/simple-login/1.2.0/firebase-simple-login.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-route.js"></script>
-
 <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+<!--<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-bindonce/0.2.2/angular-bindonce.min.js"></script>-->
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+
+<script src="./app/vendor/bindonce.js"></script>
 
 <script src="./app/app.js"></script>
+<script src="./app/main/MainCtrl.js"></script>
+<script src="./app/services/LoginService.js"></script>
+<script src="./app/post/post.js"></script>
 
 </body>
 </html>
