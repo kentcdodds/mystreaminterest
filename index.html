@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="./app/styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
 </head>
-<body class="center-block" ng-controller="MainCtrl">
+<body class="center-block" ng-controller="MainCtrl" ng-keydown="keypress($event)">
 <div id="main-container">
   <h1>My Stream Interest</h1>
   <div>
@@ -36,10 +36,11 @@
   </div>
   <div class="ng-cloak">
     <div class="stream">
-      <h2>{{user.provider === 'facebook' ? 'Facebook' : user.provider === 'twitter' ? 'Twitter' : ''}}</h2>
-      <span>You are {{interestPercent}}% interested in your stream...</span>
-      <div ng-repeat="post in stream">
-        <msi-post></msi-post>
+      <h2>Your {{user.provider === 'facebook' ? 'Facebook' : user.provider === 'twitter' ? 'Twitter' : ''}} stream is {{interestPercent}}% interesting to you...</h2>
+      <div ng-if="stream.length" class="stream-container">
+        <i ng-show="currentPostIndex > 0" class="fa fa-arrow-left nav-arrow nav-arrow-left" ng-click="currentPostIndex = currentPostIndex - 1"></i>
+        <i ng-show="currentPostIndex < stream.length - 1" class="fa fa-arrow-right nav-arrow nav-arrow-right" ng-click="currentPostIndex = currentPostIndex + 1"></i>
+        <div msi-post="stream[currentPostIndex]"></div>
       </div>
     </div>
   </div>
@@ -52,7 +53,6 @@
 <script src="https://cdn.firebase.com/js/simple-login/1.2.0/firebase-simple-login.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-route.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
-<!--<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-bindonce/0.2.2/angular-bindonce.min.js"></script>-->
 
 <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
 

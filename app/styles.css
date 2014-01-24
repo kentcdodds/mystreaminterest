@@ -6,7 +6,6 @@ body {
 }
 
 .stream {
-  border: solid black 2px;
   padding: 30px;
 }
 
@@ -51,11 +50,47 @@ body {
   color: #4099ff
 }
 
+.stream-container {
+  position: relative;
+}
+
+.nav-arrow {
+  position: absolute;
+  font-size: 40px;
+  cursor: pointer;
+}
+
+.nav-arrow-left {
+  left: 0;
+}
+
+.nav-arrow-right {
+  right: 0;
+}
+
 /*
  * Post styles
  */
+.post-container {
+  width: 600px;
+}
+.post-container .not-interesting {
+  margin-right:33px;
+  vertical-align: top;
+}
+
+.post-container .way-interesting {
+  margin-left:33px;
+  vertical-align: top;
+}
+
+.post-container .rating-stars {
+  font-size: 40px;
+  color: #FFD700;
+}
+
 .post {
-  width: 400px;
+  width: 600px;
 }
 .post .post-meta {
   height: 80px;
@@ -79,6 +114,15 @@ body {
 
 .post .post-content {
   overflow: hidden;
+}
+
+.post .post-content .post-image {
+  display: block;
+  max-width: 570px;
+}
+
+.post a {
+  cursor: pointer;
 }
 
 .post .share-post {

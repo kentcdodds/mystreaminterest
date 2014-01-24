@@ -1,26 +1,25 @@
-<div class="post panel panel-default" bindonce="post">
-  <div class="post-meta panel-heading">
-    <a bo-href="post.author.url">
-      <img bo-src="post.author.profilePicture.url" class="profile-picture img-circle">
-    </a>
-    <div class="post-info">
-      <a bo-href="post.author.url">
-        <strong class="post-user" bo-text="post.author.name"></strong>
+<div class="post-container center-block">
+  <button class="not-interesting btn btn-danger btn-lg margin-right-20" ng-click="post.rating=0;post.rated=true">Not interesting</button>
+  <span class="rating-stars"><rating value="post.rating" max="5"></rating></span>
+  <button class="way-interesting btn btn-success btn-lg margin-left-20" ng-click="post.rating=5">WAY interesting</button>
+
+  <div class="post panel panel-default">
+    <div class="post-meta panel-heading">
+      <a ng-href="{{post.author.url}}">
+        <img ng-src="{{post.author.profilePicture.url}}" class="profile-picture img-circle">
       </a>
-      - <small><a bo-href="post.url" bo-text="post.modified | date:'short'"></a></small>
+      <div class="post-info">
+        <a ng-href="{{post.author.url}}">
+          <strong class="post-user">{{post.author.name}}</strong>
+        </a>
+        <span ng-if="post.url && post.author.name">-</span> <small ng-if="post.url"><a ng-href="{{post.url}}">{{post.modified | date:'short'}}</a></small>
+      </div>
     </div>
-  </div>
-  <div class="post-content panel-body">
-    <div bo-text="post.content.text"></div>
-    <a bo-href="post.content.url">
-      <img ng-if="post.content.img.url" bo-src="post.content.img.url">
-      <div bo-text="post.content.img.caption"></div>
-    </a>
-    <div bo-text="post.content.description"></div>
-  </div>
-  <div class="share-post panel-footer">
-    <div class="pull-right">
-      <rating value="post.rating" max="5"></rating>
+    <div class="post-content panel-body">
+      <div>{{post.content.text}}</div>
+      <a ng-if="post.content.img.url" ng-href="{{post.content.url}}"><img class="post-image" ng-src="{{post.content.img.url}}"></a>
+      <a ng-if="post.content.img.caption" ng-href="{{post.content.url}}">{{post.content.img.caption}}</a>
+      <div>{{post.content.description}}</div>
     </div>
   </div>
 </div>

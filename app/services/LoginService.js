@@ -1,4 +1,4 @@
-angular.module('msi').factory('LoginService', function(Firebase, $firebaseSimpleLogin, $rootScope, $http, StreamGenerator, $q) {
+angular.module('msi').factory('LoginService', function(Firebase, $firebaseSimpleLogin, $rootScope, $http, $q, _) {
   var firebaseRef = new Firebase('https://mystreaminterest.firebaseio.com');
   var loginObj = $firebaseSimpleLogin(firebaseRef);
 
@@ -7,11 +7,78 @@ angular.module('msi').factory('LoginService', function(Firebase, $firebaseSimple
       config: {
         scope: 'read_stream'
       },
-      streamUrl: 'https://graph.facebook.com/me/home'
+      getStream: function() {
+        var url = 'https://graph.facebook.com/fql?q=SELECT post_id, actor_id, type, attachment, permalink, created_time, description, message FROM stream where filter_key = \'nf\' and not (type in (257)) LIMIT 100&';
+        var deferred = $q.defer();
+        var token = loginObj.user.accessToken;
+        $http.get(url + 'access_token=' + token).success(function(posts) {
+          posts = posts.data;
+          var uids = [];
+          _.each(posts, function(postData) {
+            uids.push(postData['actor_id']);
+          });
+          var url = 'https://graph.facebook.com/fql?q=SELECT uid, name FROM user where uid in ("' + uids.join('","') + '")&';
+          $http.get(url + 'access_token=' + token).success(function(users) {
+            users = users.data;
+            var stream = [];
+            _.each(posts, function(postData) {
+              postData.user = _.find(users, {uid: postData['actor_id']});
+              stream.push(createPost(postData));
+            });
+            deferred.resolve(stream);
+          }).error(deferred.reject);
+        }).error(deferred.reject);
+
+        function createPost(postData) {
+          var attachment = postData.attachment || {};
+          var media = {};
+          if (attachment.media) {
+            media = attachment.media[0] || {};
+          }
+          var username = '';
+          if (postData.user && postData.user.name) {
+            username = postData.user.name;
+          }
+          if (media.src) {
+            media.src = media.src.replace('_s.', '_n.');
+          }
+          return {
+            author: {
+              profilePicture: {
+                url: 'http://graph.facebook.com/' + postData['actor_id'] + '/picture'
+              },
+              url: 'http://facebook.com/' + postData['actor_id'],
+              name: username
+            },
+            url: postData.permalink,
+            modified: new Date(postData['created_time']),
+            content: {
+              text: postData.message || postData.description,
+              url: postData.link,
+              img: {
+                url: media.src,
+                caption: attachment.caption
+              },
+              description: attachment.description
+            },
+            src: postData
+          };
+        }
+
+        return deferred.promise;
+      }
     },
     twitter: {
       config: {},
-      streamUrl: 'https://api.twitter.com/1.1/statuses/home_timeline.json'
+      getStream: function() {
+        var url = 'https://api.twitter.com/1.1/statuses/home_timeline.json?';
+        var deferred = $q.defer();
+        var token = loginObj.user.accessToken;
+        $http.get(url + 'access_token=' + token).success(function(posts) {
+          console.log(posts);
+        });
+        return deferred.promise;
+      }
     }
   };
 
@@ -51,18 +118,7 @@ angular.module('msi').factory('LoginService', function(Firebase, $firebaseSimple
       return loginObj.$getCurrentUser();
     },
     getStream: function(provider) {
-      var url = providers[provider].streamUrl;
-      var deferred = $q.defer();
-      $http({
-        method: 'GET',
-        url: url + '?access_token=' + loginObj.user.accessToken
-      }).success(function(data) {
-        var stream = StreamGenerator[provider](data);
-        deferred.resolve(stream);
-      }).error(function(err) {
-        deferred.reject(err);
-      });
-      return deferred.promise;
+      return providers[provider].getStream();
     }
   }
 });

@@ -1,6 +1,9 @@
 angular.module('msi').directive('msiPost', function() {
   return {
-    restrict: 'E',
+    restrict: 'A',
+    scope: {
+      post: '=msiPost'
+    },
     templateUrl: './app/post/post.html'
   }
 });
