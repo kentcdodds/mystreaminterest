@@ -13,20 +13,55 @@ angular.module('msi').factory('LoginService', function(Firebase, $firebaseSimple
         var token = loginObj.user.accessToken;
         $http.get(url + 'access_token=' + token).success(function(posts) {
           posts = posts.data;
-          var uids = [];
+          var actorIds = [];
+          var promises = [];
           _.each(posts, function(postData) {
-            uids.push(postData['actor_id']);
+            actorIds.push(postData['actor_id']);
           });
-          var url = 'https://graph.facebook.com/fql?q=SELECT uid, name FROM user where uid in ("' + uids.join('","') + '")&';
-          $http.get(url + 'access_token=' + token).success(function(users) {
-            users = users.data;
+          var ids = {};
+          var userUrl = 'https://graph.facebook.com/fql?q=SELECT uid, name FROM user where uid in ("' + actorIds.join('","') + '")&';
+          var pageUrl = 'https://graph.facebook.com/fql?q=SELECT page_id, name FROM page where page_id in ("' + actorIds.join('","') + '")&';
+          var groupUrl = 'https://graph.facebook.com/fql?q=SELECT gid, name FROM group where gid in ("' + actorIds.join('","') + '")&';
+          var eventUrl = 'https://graph.facebook.com/fql?q=SELECT eid, name FROM event where eid in ("' + actorIds.join('","') + '")&';
+          function addIds(data) {
+            if (!(data.data && data.data.length)) {
+              allDone();
+              return;
+            }
+            var idField = null;
+            var sample = data.data[0];
+            if (sample.hasOwnProperty('uid')) {
+              idField = 'uid';
+            } else if (sample.hasOwnProperty('page_id')) {
+              idField = 'page_id';
+            } else if (sample.hasOwnProperty('gid')) {
+              idField = 'gid';
+            } else if (sample.hasOwnProperty('eid')) {
+              idField = 'eid';
+            } else {
+              return;
+            }
+
+            _.each(data.data, function(result) {
+              ids[result[idField]] = result.name;
+            });
+            console.log('add ids');
+            allDone();
+          }
+          promises.push($http.get(userUrl + 'access_token=' + token).success(addIds));
+          promises.push($http.get(pageUrl + 'access_token=' + token).success(addIds));
+          promises.push($http.get(groupUrl + 'access_token=' + token).success(addIds));
+          promises.push($http.get(eventUrl + 'access_token=' + token).success(addIds));
+
+          var allDone = _.after(promises.length, function success() {
+            console.log('all done');
             var stream = [];
             _.each(posts, function(postData) {
-              postData.user = _.find(users, {uid: postData['actor_id']});
+              postData.username = ids[postData['actor_id']];
               stream.push(createPost(postData));
             });
             deferred.resolve(stream);
-          }).error(deferred.reject);
+          });
         }).error(deferred.reject);
 
         function createPost(postData) {
@@ -34,10 +69,6 @@ angular.module('msi').factory('LoginService', function(Firebase, $firebaseSimple
           var media = {};
           if (attachment.media) {
             media = attachment.media[0] || {};
-          }
-          var username = '';
-          if (postData.user && postData.user.name) {
-            username = postData.user.name;
           }
           if (media.src) {
             media.src = media.src.replace('_s.', '_n.');
@@ -48,13 +79,14 @@ angular.module('msi').factory('LoginService', function(Firebase, $firebaseSimple
                 url: 'http://graph.facebook.com/' + postData['actor_id'] + '/picture'
               },
               url: 'http://facebook.com/' + postData['actor_id'],
-              name: username
+              name: postData.username
             },
             url: postData.permalink,
             modified: new Date(postData['created_time']),
             content: {
               text: postData.message || postData.description,
-              url: postData.link,
+              url: postData.link || attachment.href || media.href,
+              name: attachment.name,
               img: {
                 url: media.src,
                 caption: attachment.caption

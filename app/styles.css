@@ -2,13 +2,20 @@ body {
   max-width: 800px;
 }
 
+.ng-cloak {
+  display: none;
+}
+
 #main-container {
 }
 
-.stream {
-  padding: 30px;
+.intro-title {
+  font-size: 120%;
 }
 
+/*
+ * Facebook button
+ */
 .login-buttons {
   width: 200px;
 }
@@ -17,41 +24,38 @@ body {
   color: #3b5998
 }
 
-.color-twitter {
-  color: #4099ff
-}
-
-.background-color-facebook {
-  background-color: #3b5998
-}
-
-.color-twitter {
-  background-color: #4099ff
-}
-
-.third-party-button {
-  color: #fff;
-  font-size: 30px
-}
-
 .button-facebook {
+  color: #fff;
   background-color: #3b5998
+}
+
+.button-facebook.btn-lg {
+  font-size: 30px;
 }
 
 .button-facebook:hover {
   color: #3b5998
 }
 
-.button-twitter {
-  background-color: #4099ff
+
+.loading-area {
+  text-align: center;
 }
 
-.button-twitter:hover {
-  color: #4099ff
+.loading-area small {
+  display: block;
+}
+
+/*
+ * Stream area
+ */
+.stream {
+  padding: 10px;
 }
 
 .stream-container {
   position: relative;
+  margin-top: 20px;
 }
 
 .nav-arrow {
@@ -116,9 +120,14 @@ body {
   overflow: hidden;
 }
 
-.post .post-content .post-image {
-  display: block;
+.post .post-content .post-media {
+  text-align: center;
+}
+
+.post .post-content .post-media .post-image {
+  display: inline-block;
   max-width: 570px;
+  margin: 15px 0 15px 0;
 }
 
 .post a {
@@ -127,4 +136,20 @@ body {
 
 .post .share-post {
   height: 40px;
+}
+
+.share-score {
+  width: 640px;
+}
+
+.video-iframe {
+  margin-top:20px;
+}
+
+
+/*
+ * Helpers
+ */
+.cursor-pointer {
+  cursor: pointer;
 }

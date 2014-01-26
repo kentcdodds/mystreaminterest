@@ -8,44 +8,53 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
 </head>
 <body class="center-block" ng-controller="MainCtrl" ng-keydown="keypress($event)">
-<div id="main-container">
-  <h1>My Stream Interest</h1>
-  <div>
-    See how much of your stream is actually interesting to you. Login below to get started.
-  </div>
-  <div class="login-buttons center-block ng-cloak">
-    <div ng-if="!user">
-      <button class="btn btn-default btn-block btn-lg button-twitter third-party-button" ng-click="login('twitter')">
-        <i class="fa fa-twitter margin-right-medium"></i> Twitter
-      </button>
-      <br />
-      <button class="btn btn-default btn-block btn-lg button-facebook third-party-button" ng-click="login('facebook')">
-        <i class="fa fa-facebook margin-right-medium"></i> Facebook
-      </button>
+<h1>My Stream Interest <span class="ng-cloak" ng-show="stream.length">Score: {{interestPercent}}% <button ng-hide="currentPostIndex === stream.length" class="btn btn-default button-facebook" ng-click="share(interestPercent)">Share Score</button></span></h1>
+<div id="main-container" class="ng-cloak">
+  <div ng-show="!user">
+    <div class="intro-title">
+      Login to Facebook to see how interesting your news feed is to you.
     </div>
-    <div ng-if="user">
-      <h3>Switch to: </h3>
-      <button class="btn btn-default btn-block button-twitter third-party-button" ng-click="logout(); login('twitter')" ng-if="user.provider === 'facebook'">
-        <i class="fa fa-twitter margin-right-medium"></i> Twitter
-      </button>
-      <br />
-      <button class="btn btn-default btn-block button-facebook third-party-button" ng-click="logout(); login('facebook')" ng-if="user.provider === 'twitter'">
-        <i class="fa fa-facebook margin-right-medium"></i> Facebook
+    <div class="login-buttons center-block">
+      <button class="btn btn-default btn-block btn-lg button-facebook" ng-click="login('facebook')">
+        <i class="fa fa-facebook"></i> Facebook
       </button>
     </div>
   </div>
-  <div class="ng-cloak">
-    <div class="stream">
-      <h2>Your {{user.provider === 'facebook' ? 'Facebook' : user.provider === 'twitter' ? 'Twitter' : ''}} stream is {{interestPercent}}% interesting to you...</h2>
-      <div ng-if="stream.length" class="stream-container">
-        <i ng-show="currentPostIndex > 0" class="fa fa-arrow-left nav-arrow nav-arrow-left" ng-click="currentPostIndex = currentPostIndex - 1"></i>
-        <i ng-show="currentPostIndex < stream.length - 1" class="fa fa-arrow-right nav-arrow nav-arrow-right" ng-click="currentPostIndex = currentPostIndex + 1"></i>
-        <div msi-post="stream[currentPostIndex]"></div>
+  <div ng-show="user">
+    <div ng-show="!stream" class="loading-area">
+      <h2>Please wait... We're loading your news feed.</h2>
+      <small class="muted">Don't worry, we don't save anything...</small>
+      <i class="fa fa-spinner fa-spin fa-5x"></i>
+    </div>
+    <div ng-show="stream">
+      <div class="stream">
+        <div class="controls">
+          <div>
+            <span ng-show="currentPostIndex < stream.length">
+              <i ng-show="currentPostIndex > 0" class="fa fa-step-backward cursor-pointer" ng-click="currentPostIndex = 0"></i>
+              <strong>{{currentPostIndex + 1}} of {{stream.length}}</strong>
+              <i class="fa fa-step-forward cursor-pointer" ng-click="currentPostIndex = stream.length"></i>
+            </span>
+            <button class="btn btn-sm btn-default" ng-click="getStream()"><i class="fa fa-refresh" ng-class="{'fa-spin': refreshingStream}"></i> Refresh News Feed</button>
+            <button class="btn btn-danger btn-sm" ng-click="logout()">Logout</button>
+          </div>
+          <strong>Tips:</strong> Use the arrow keys and the number keys on your keyboard go faster. You can also give something a score of "0" if it's not very interesting. Try using the back-tick key for that to make it faster.
+        </div>
+        <div ng-show="stream.length" class="stream-container">
+          <i ng-show="currentPostIndex > 0" class="fa fa-arrow-left nav-arrow nav-arrow-left" ng-click="currentPostIndex = currentPostIndex - 1"></i>
+          <i ng-show="currentPostIndex < stream.length" class="fa fa-arrow-right nav-arrow nav-arrow-right" ng-click="currentPostIndex = currentPostIndex + 1"></i>
+          <div ng-show="currentPostIndex < stream.length" msi-post="stream[currentPostIndex]"></div>
+          <div ng-show="currentPostIndex === stream.length" class="share-score center-block">
+            <h3>{{interestExclamation}} {{100 - interestPercent}}% of your Facebook news feed is <em>not</em> interesting to you!</h3>
+            <button class="btn btn-default btn-block btn-lg button-facebook" ng-click="share(interestPercent)">
+              <i class="fa fa-facebook"></i> Share your {{interestPercent}}% score
+            </button>
+            <iframe class="video-iframe" width="640" height="360" src="//www.youtube.com/embed/glVaMyDRpII?rel=0" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <button class="btn btn-success" ng-click="getStream()">Get Stream</button>
-  <button class="btn btn-danger" ng-click="logout()">Logout</button>
 </div>
 
 <script src="https://cdn.firebase.com/v0/firebase.js"></script>
@@ -57,6 +66,7 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
 
 <script src="./app/vendor/bindonce.js"></script>
+<script src="./app/vendor/Scope.SafeApply.min.js"></script>
 
 <script src="./app/app.js"></script>
 <script src="./app/main/MainCtrl.js"></script>
